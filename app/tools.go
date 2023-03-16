@@ -63,15 +63,3 @@ func ListToTree(list *[]map[string]interface{}, pid uint32) []map[string]interfa
 	}
 	return tree
 }
-
-// GetUser 检测token并返回用户
-func GetUser(token []string) (string, string) {
-	if token == nil {
-		return "", "token is empty"
-	}
-	userID, err := duang.DeToken(token[0])
-	if err != nil {
-		return "", err.Error()
-	}
-	return userID.ID, ""
-}

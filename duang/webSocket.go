@@ -22,6 +22,7 @@ import (
 	"golang.org/x/sync/errgroup"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 var (
@@ -64,18 +65,12 @@ func (ch *CenterHandler) monitoring() {
 		select {
 		// 注册，新用户连接过来会推进注册通道，这里接收推进来的用户指针
 		case client := <-ch.register:
-			err := Init("2023-02-20", 1)
-			if err != nil {
-				return
-			}
-			id := GenID()
 			mess := map[string]string{
-				"data": id,
+				"data": "success",
 				"type": "id",
 			}
 			msg, _ := json.Marshal(mess)
 			client.send <- msg
-			ch.clients[client] = id
 			// 注销，关闭连接或连接异常会将用户推出群聊
 		case client := <-ch.unregister:
 			delete(ch.clients, client)
@@ -83,35 +78,24 @@ func (ch *CenterHandler) monitoring() {
 		case message := <-ch.broadcast:
 			println("message：" + string(message))
 			js := make(map[string]interface{})
-			err := json.Unmarshal(message, &js)
-			if err != nil {
-				log.Println(err)
+			er := json.Unmarshal(message, &js)
+			if er != nil {
+				log.Println(er)
 				break
 			}
 			// 推送给每个用户的通道，每个用户都有跑协程起了writePump的监听
-			for client := range ch.clients {
-				//if "chat" == js["type"] {
-				//	if v == js["toId"] || v == js["selfId"] {
-				//		client.send <- message
-				//	}
-				//} else {
-				//	if v == js["toId"] {
-				//		client.send <- message
-				//	}
-				//}
-				//fmt.Println(v)
-				//if js["groupId"] == "come" {
-				client.send <- message
-				//	break
-				//} else if js["groupId"] == "go" {
-				//	for k, vv := range ch.clients {
-				//		if vv == js["selfId"] {
-				//			k.send <- message
-				//			break
-				//		}
-				//	}
-				//}
-
+			for client, v := range ch.clients {
+				if "chat" == js["type"] {
+					toId := strconv.FormatFloat(js["toId"].(float64), 'f', 0, 32)
+					selfId := strconv.FormatFloat(js["selfId"].(float64), 'f', 0, 32)
+					if v == toId || v == selfId {
+						client.send <- message
+					}
+				} else {
+					if v == js["toId"] {
+						client.send <- message
+					}
+				}
 			}
 		}
 	}
@@ -165,6 +149,11 @@ func WebSocketMain() {
 	go handler.monitoring()
 	// websocket 请求，建立双工通讯连接
 	http.HandleFunc("/ws", func(writer http.ResponseWriter, request *http.Request) {
+		token := request.Header["Token"]
+		wID, er := GetUser(token)
+		if er != "" {
+			return
+		}
 		fmt.Println("Welcome")
 		// 由 http 升级成为 websocket 服务
 		if conn, err = upgrader.Upgrade(writer, request, nil); err != nil {
@@ -173,6 +162,7 @@ func WebSocketMain() {
 		}
 		// 为每个连接创建一个 Client 实例，（实际上这里应该还有绑定用户真实信息的操作）
 		client := &Client{&handler, conn, make(chan []byte, 256)}
+		handler.clients[client] = wID
 		// 推给监控中心注册到用户集合中
 		handler.register <- client
 		// 每个 client 都挂起 2 个新的协程，监控读、写状态

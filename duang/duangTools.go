@@ -80,3 +80,15 @@ func DeToken(tokenString string) (*MyCustomClaims, error) {
 		return nil, er
 	}
 }
+
+// GetUser 检测token并返回用户
+func GetUser(token []string) (string, string) {
+	if token == nil {
+		return "", "token is empty"
+	}
+	userID, er := DeToken(token[0])
+	if er != nil {
+		return "", er.Error()
+	}
+	return userID.ID, ""
+}

@@ -17,26 +17,24 @@ import (
 	"reflect"
 )
 
-var tablePrefix = config.RetDatabase().Prefix
+var (
+	tablePrefix = config.RetDatabase().Prefix
+	openDb, _   = gorm.Open(mysql.Open(config.RetDatabase().Dns), &gorm.Config{})
+	db          = RetDb(openDb)
+)
 
 // RetDb 初始化数据库连接
-func RetDb() *gorm.DB {
-	db, err := gorm.Open(mysql.Open(config.RetDatabase().Dns), &gorm.Config{})
-	if err != nil {
-		log.Println(err)
+func RetDb(db *gorm.DB) *gorm.DB {
+	sqlDB, er := db.DB()
+	if er != nil {
+		log.Println(er)
 	}
-	//sqlDB, er := db.DB()
-	//if er != nil {
-	//	log.Println(er)
-	//}
-	//sqlDB.SetMaxIdleConns(100)
-	//sqlDB.SetMaxOpenConns(100)
-	//sqlDB.SetConnMaxLifetime(3)
+	sqlDB.SetMaxIdleConns(100)
+	sqlDB.SetMaxOpenConns(100)
 	return db
 }
 
 func Pdo_get(tableName string, columns []string, where map[string]interface{}) map[string]interface{} {
-	db := RetDb()
 	var results map[string]interface{}
 	var order string
 	for k, v := range where {
@@ -54,7 +52,6 @@ func Pdo_get(tableName string, columns []string, where map[string]interface{}) m
 }
 
 func Pdo_getall(tableName string, columns []string, where map[string]interface{}) (result []map[string]interface{}, pageNum int64, total int64) {
-	db := RetDb()
 	var results []map[string]interface{}
 	var num int      // 显示条数
 	var order string // 排序
@@ -109,7 +106,6 @@ func Pdo_getall(tableName string, columns []string, where map[string]interface{}
 }
 
 func Pdo_insert(tableName string, data map[string]interface{}) interface{} {
-	db := RetDb()
 	Init("2023-02-20", int64(rand.Intn(1000)))
 	id := GenID()
 	data["id"] = id
@@ -121,7 +117,6 @@ func Pdo_insert(tableName string, data map[string]interface{}) interface{} {
 }
 
 func Pdo_insertall(tableName string, data []map[string]interface{}) interface{} {
-	db := RetDb()
 	var ids []string
 	for i := 0; i < len(data); i++ {
 		//id := duang.GetUuid()
@@ -138,14 +133,12 @@ func Pdo_insertall(tableName string, data []map[string]interface{}) interface{} 
 }
 
 func Pdo_delete(tableName string, where map[string]interface{}) int64 {
-	db := RetDb()
 	var results map[string]interface{}
 	res := db.Table(tablePrefix+tableName).Delete(&results, where)
 	return res.RowsAffected
 }
 
 func Pdo_update(tableName string, data map[string]interface{}, where map[string]interface{}) int64 {
-	db := RetDb()
 	res := db.Table(tablePrefix + tableName).Where(where).Updates(data)
 	if res.Error != nil {
 		log.Panicln(res.Error)
@@ -154,7 +147,6 @@ func Pdo_update(tableName string, data map[string]interface{}, where map[string]
 }
 
 func Pdo_count(tableName string, where map[string]interface{}) int64 {
-	db := RetDb()
 	var total int64
 	res := db.Table(tablePrefix + tableName).Where(where).Count(&total)
 	if res.Error != nil {
