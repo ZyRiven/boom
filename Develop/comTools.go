@@ -20,10 +20,20 @@ import (
 
 func (cc Controller) List() {
 	cc.group.GET("/list", func(c *duang.Context) {
-		c.JSON(200, duang.H{
+		token := app.GetRequest(c).Header["Token"]
+		_, err := duang.GetUser(token)
+		if err != "" {
+			c.JSON(http.StatusUnauthorized, duang.H{
+				"code": 401,
+				"msg":  err,
+			})
+			return
+		}
+		c.JSON(http.StatusOK, duang.H{
 			"code": 200,
 			"data": "11",
 		})
+		return
 	})
 }
 
@@ -31,10 +41,10 @@ func (cc Controller) List() {
 func (cc Controller) Upload() {
 	cc.group.POST("/upload", func(c *duang.Context) {
 		token := app.GetRequest(c).Header["Token"]
-		_, err := app.GetUser(token)
+		_, err := duang.GetUser(token)
 		if err != "" {
-			c.JSON(http.StatusOK, duang.H{
-				"code": 400,
+			c.JSON(http.StatusUnauthorized, duang.H{
+				"code": 401,
 				"msg":  err,
 			})
 			return
