@@ -15,22 +15,28 @@ import (
 	"log"
 	"math/rand"
 	"reflect"
+	"time"
 )
 
 var (
 	tablePrefix = config.RetDatabase().Prefix
-	openDb, _   = gorm.Open(mysql.Open(config.RetDatabase().Dns), &gorm.Config{})
-	db          = RetDb(openDb)
+	db          *gorm.DB
 )
 
+func init() {
+	db = RetDb()
+}
+
 // RetDb 初始化数据库连接
-func RetDb(db *gorm.DB) *gorm.DB {
+func RetDb() *gorm.DB {
+	db, _ = gorm.Open(mysql.Open(config.RetDatabase().Dns), &gorm.Config{})
 	sqlDB, er := db.DB()
 	if er != nil {
 		log.Println(er)
 	}
-	sqlDB.SetMaxIdleConns(100)
+	sqlDB.SetMaxIdleConns(10)
 	sqlDB.SetMaxOpenConns(100)
+	sqlDB.SetConnMaxLifetime(time.Minute)
 	return db
 }
 
