@@ -13,7 +13,6 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"log"
-	"math/rand"
 	"reflect"
 	"time"
 )
@@ -111,31 +110,12 @@ func Pdo_getall(tableName string, columns []string, where map[string]interface{}
 	return results, pageNum, total
 }
 
-func Pdo_insert(tableName string, data map[string]interface{}) interface{} {
-	Init("2023-02-20", int64(rand.Intn(1000)))
-	id := GenID()
-	data["id"] = id
+func Pdo_insert[T map[string]interface{} | []map[string]interface{}](tableName string, data T) int64 {
 	result := db.Table(tablePrefix + tableName).Create(&data)
 	if result.Error != nil {
 		log.Panicln(result.Error)
 	}
-	return id
-}
-
-func Pdo_insertall(tableName string, data []map[string]interface{}) interface{} {
-	var ids []string
-	for i := 0; i < len(data); i++ {
-		//id := duang.GetUuid()
-		Init("2023-02-20", int64(rand.Intn(3000)))
-		id := GenID()
-		data[i]["id"] = id
-		ids = append(ids, id)
-	}
-	result := db.Table(tablePrefix + tableName).Create(&data)
-	if result.Error != nil {
-		log.Panicln(result.Error)
-	}
-	return ids
+	return result.RowsAffected
 }
 
 func Pdo_delete(tableName string, where map[string]interface{}) int64 {

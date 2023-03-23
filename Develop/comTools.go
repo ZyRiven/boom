@@ -18,20 +18,11 @@ import (
 	"strings"
 )
 
-func (cc Controller) List() {
-	cc.group.GET("/list", func(c *duang.Context) {
-		c.JSON(200, duang.H{
-			"code": 200,
-			"data": "11",
-		})
-	})
-}
-
 // Upload 上传图片
 func (cc Controller) Upload() {
 	cc.group.POST("/upload", func(c *duang.Context) {
 		token := app.GetRequest(c).Header["Token"]
-		_, err := app.GetUser(token)
+		_, err := duang.GetUser(token)
 		if err != "" {
 			c.JSON(http.StatusOK, duang.H{
 				"code": 400,

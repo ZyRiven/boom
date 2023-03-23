@@ -30,31 +30,43 @@ config/config.go
 * 在route/route.go里添加
 
 ```go 
-user := r.Group("/user")
-cUser := Develop.NewController(user)
-RegisterController(cUser)
+RegisterController(Develop.NewController(r.Group("/user")))
 ```
 
 * 在Develop/develop.go下定义结构体并初始化，
 
-```go 
+```go     
 type Controller struct {
-	group *duang.RouterGroup
+group *duang.RouterGroup
 }
 
 func New(g *duang.RouterGroup) Controller {
-	return Controller{group: g}
+return Controller{group: g}
 }
 ```
 
 * 在Develop下新建go文件
 
-```go	
-func (hello Controller) SayHello() {
-	hello.group.GET("/sayHello", func(c *duang.Context) {
-		c.HTML(http.StatusOK, "<h1>Hello duang</h1>")
-	})
+```go
+func (cc Controller) List() {
+cc.group.GET("/list", func (c *duang.Context) {
+// 检测登陆
+token := app.GetRequest(c).Header["Token"]
+_, err := duang.GetUser(token)
+if err != "" {
+c.JSON(http.StatusUnauthorized, duang.H{
+"code": 401,
+"msg":  err,
+})
+return
 }
+c.JSON(200, duang.H{
+"code": 200,
+"data": result,
+})
+})
+}
+
 ```
 
 ## 数据库
@@ -75,12 +87,12 @@ import "gohello/duang"
 
 ```go 
 w := map[string]interface{}{
-    "id": 869934687064064, 
-    "Limit": 2,
-    "Order": "id DESC",
+"id": 869934687064064,
+"Limit": 2,
+"Order": "id DESC",
 }
 columns := []string{
-    "name",
+"name",
 }
 result := duang.Pdo_get("user", columns, w)
 ```
@@ -109,21 +121,20 @@ columns := []string{
 list, pageNum, total := duang.Pdo_getall("user", columns, w)
 ```
 
-### 插入单条记录`Pdo_insert()`
+### 插入记录`Pdo_insert()`
 
-参数为 **(表名，数据)** ，返回插入记录的id，id由雪花算法生成，类型为**string**
+参数为 **(表名，数据)** ，返回值为影响的记录数
 
 * 示例：
 
 ``` go
-add := duang.Pdo_insert("role_dept", map[string]interface{}{"dept_id": 44})
+data := map[string]interface{}{
+    "dept_id": 333
+}
+add := duang.Pdo_insertall("role_dept", data)
 ```
 
-### 插入多条记录`Pdo_insertall()`
-
-返回值为id数组
-
-* 示例：
+或
 
 ``` go
 data := []map[string]interface{}{

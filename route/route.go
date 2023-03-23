@@ -17,17 +17,11 @@ import (
 
 func Init(r *duang.Engine) {
 	// 后台接口
-	a := r.Group("/admin")
-	cAdmin := admin.NewMemu(a)
-	RegisterController(cAdmin)
-	// web接口
-	web := r.Group("/web")
-	cWeb := Develop.New(web)
-	RegisterController(cWeb)
+	RegisterController(admin.NewMemu(r.Group("/admin")))
+	// 用户接口
+	RegisterController(Develop.New(r.Group("/user")))
 	//modbus接口
-	modbusTest := r.Group("/modbus")
-	cModbusTest := Develop.NewCModbus(modbusTest)
-	RegisterController(cModbusTest)
+	RegisterController(Develop.NewCModbus(r.Group("/modbus")))
 }
 
 // RegisterController 反射体

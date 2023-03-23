@@ -41,8 +41,8 @@ func RetDatabase() Database {
 
 func RetServer() Server {
 	return Server{
-		Address:       ":9999",
-		WebSocketPort: ":8888",
+		Address:       ":8081",
+		WebSocketPort: ":8088",
 	}
 }
 

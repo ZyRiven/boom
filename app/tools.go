@@ -63,3 +63,18 @@ func ListToTree(list *[]map[string]interface{}, pid uint32) []map[string]interfa
 	}
 	return tree
 }
+
+// ConvertStrSlice2Map 将字符串 slice 转为 map[string]struct{}。
+func ConvertStrSlice2Map(sl []interface{}) map[interface{}]struct{} {
+	set := make(map[interface{}]struct{}, len(sl))
+	for _, v := range sl {
+		set[v] = struct{}{}
+	}
+	return set
+}
+
+// InMap 判断字符串是否在 map 中。
+func InMap(m map[interface{}]struct{}, s string) bool {
+	_, ok := m[s]
+	return ok
+}

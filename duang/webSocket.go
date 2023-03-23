@@ -22,7 +22,6 @@ import (
 	"golang.org/x/sync/errgroup"
 	"log"
 	"net/http"
-	"strconv"
 )
 
 var (
@@ -66,8 +65,7 @@ func (ch *CenterHandler) monitoring() {
 		// 注册，新用户连接过来会推进注册通道，这里接收推进来的用户指针
 		case client := <-ch.register:
 			mess := map[string]string{
-				"data": "success",
-				"type": "id",
+				"msg": "success",
 			}
 			msg, _ := json.Marshal(mess)
 			client.send <- msg
@@ -84,18 +82,8 @@ func (ch *CenterHandler) monitoring() {
 				break
 			}
 			// 推送给每个用户的通道，每个用户都有跑协程起了writePump的监听
-			for client, v := range ch.clients {
-				if "chat" == js["type"] {
-					toId := strconv.FormatFloat(js["toId"].(float64), 'f', 0, 32)
-					selfId := strconv.FormatFloat(js["selfId"].(float64), 'f', 0, 32)
-					if v == toId || v == selfId {
-						client.send <- message
-					}
-				} else {
-					if v == js["toId"] {
-						client.send <- message
-					}
-				}
+			for client := range ch.clients {
+				client.send <- message
 			}
 		}
 	}
@@ -149,12 +137,13 @@ func WebSocketMain() {
 	go handler.monitoring()
 	// websocket 请求，建立双工通讯连接
 	http.HandleFunc("/ws", func(writer http.ResponseWriter, request *http.Request) {
+		// 用户登陆后才可以连接websocket（自定义逻辑）
 		token := request.Header["Token"]
 		wID, er := GetUser(token)
 		if er != "" {
 			return
 		}
-		fmt.Println("Welcome")
+		fmt.Println("Welcome：" + wID)
 		// 由 http 升级成为 websocket 服务
 		if conn, err = upgrader.Upgrade(writer, request, nil); err != nil {
 			log.Println(err)
