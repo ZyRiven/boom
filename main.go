@@ -1,9 +1,9 @@
 package main
 
 import (
-	"gohello/config"
-	"gohello/duang"
-	"gohello/route"
+	"boom/config"
+	"boom/duang"
+	"boom/route"
 )
 
 func main() {

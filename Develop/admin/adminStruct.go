@@ -7,7 +7,7 @@
 
 package admin
 
-import "gohello/duang"
+import "boom/duang"
 
 type Memu struct {
 	group *duang.RouterGroup

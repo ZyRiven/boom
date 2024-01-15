@@ -10,8 +10,8 @@ package modbus
 import (
 	"fmt"
 	"github.com/goburrow/serial"
-	modbus "github.com/things-go/go-modbus"
-	"gohello/config"
+	"github.com/things-go/go-modbus"
+	"boom/config"
 	"log"
 )
 

@@ -16,7 +16,7 @@ package duang
 import (
 	"fmt"
 	"github.com/olekukonko/tablewriter"
-	"gohello/config"
+	"boom/config"
 	"net/http"
 	"os"
 	"strings"

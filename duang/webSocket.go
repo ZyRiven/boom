@@ -18,7 +18,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/websocket"
-	"gohello/config"
+	"boom/config"
 	"golang.org/x/sync/errgroup"
 	"log"
 	"net/http"

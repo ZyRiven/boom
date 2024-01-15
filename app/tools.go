@@ -11,7 +11,7 @@ package app
 import (
 	"crypto/md5"
 	"encoding/hex"
-	"gohello/duang"
+	"boom/duang"
 	"net/url"
 )
 

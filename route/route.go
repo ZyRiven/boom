@@ -9,9 +9,9 @@
 package route
 
 import (
-	"gohello/Develop"
-	"gohello/Develop/admin"
-	"gohello/duang"
+	"boom/Develop"
+	"boom/Develop/admin"
+	"boom/duang"
 	"reflect"
 )
 

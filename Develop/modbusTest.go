@@ -8,8 +8,8 @@
 package Develop
 
 import (
-	"gohello/duang"
-	"gohello/duang/modbus"
+	"boom/duang"
+	"boom/duang/modbus"
 	"net/http"
 )
 

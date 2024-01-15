@@ -29,13 +29,13 @@ config/config.go
 
 * 在route/route.go里添加
 
-```go 
+```go
 RegisterController(Develop.NewController(r.Group("/user")))
 ```
 
 * 在Develop/develop.go下定义结构体并初始化，
 
-```go     
+```go
 type Controller struct {
 group *duang.RouterGroup
 }
@@ -74,7 +74,7 @@ c.JSON(200, duang.H{
 使用时先引用
 
 ``` go
-import "gohello/duang"
+import "boom/duang"
 ```
 
 数据库采用`gorm`,官方文档：https://gorm.io/zh_CN/docs/
@@ -85,7 +85,7 @@ import "gohello/duang"
 
 * 示例：
 
-```go 
+```go
 w := map[string]interface{}{
 "id": 869934687064064,
 "Limit": 2,
@@ -111,7 +111,7 @@ result := duang.Pdo_get("user", []string{"name"}, map[string]interface{}{"id": 1
 
 ``` go
 w := map[string]interface{}{
-    "id": 869934687064064, 
+    "id": 869934687064064,
     "Limit": [2]int{1, 10},  // 第一页，每页10条
     "Order": "id DESC",
 }
@@ -138,7 +138,7 @@ add := duang.Pdo_insertall("role_dept", data)
 
 ``` go
 data := []map[string]interface{}{
-    {"dept_id": 333}, 
+    {"dept_id": 333},
     {"dept_id": 444},
 }
 add := duang.Pdo_insertall("role_dept", data)
@@ -211,7 +211,7 @@ type MyCustomClaims struct {
 
 ``` go
 claims := MyCustomClaims{
-    val, 
+    val,
     jwt.RegisteredClaims{
         ExpiresAt: jwt.NewNumericDate(time.Now().Add(8 * time.Hour)), //当前时间往后8小时
         Issuer: "test" //签名人
@@ -225,7 +225,7 @@ claims := MyCustomClaims{
 
 基本请求参数：
 
-``` js 
+``` js
 {
     "toId":"",              // 接收者的id
     "selfId":""              // 自己的id

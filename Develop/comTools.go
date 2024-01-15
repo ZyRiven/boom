@@ -10,8 +10,8 @@ package Develop
 import (
 	"bufio"
 	"fmt"
-	"gohello/app"
-	"gohello/duang"
+	"boom/app"
+	"boom/duang"
 	"io"
 	"net/http"
 	"os"

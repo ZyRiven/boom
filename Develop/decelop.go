@@ -7,7 +7,7 @@
 
 package Develop
 
-import "gohello/duang"
+import "boom/duang"
 
 type (
 	Controller struct {

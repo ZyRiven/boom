@@ -9,8 +9,8 @@ package admin
 
 import (
 	"fmt"
-	"gohello/app"
-	"gohello/duang"
+	"boom/app"
+	"boom/duang"
 	"net/http"
 	"strings"
 )

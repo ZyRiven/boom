@@ -1,4 +1,4 @@
-module gohello
+module boom
 
 go 1.19
 
@@ -7,7 +7,6 @@ require (
 	github.com/goburrow/serial v0.1.0
 	github.com/golang-jwt/jwt/v5 v5.0.0-rc.1
 	github.com/gorilla/websocket v1.5.0
-	github.com/muesli/cache2go v0.0.0-20221011235721-518229cd8021
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/things-go/go-modbus v0.0.0-20220308114341-dfd6af49e123
 	golang.org/x/sync v0.1.0

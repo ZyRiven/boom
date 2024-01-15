@@ -8,8 +8,8 @@
 package Develop
 
 import (
-	"gohello/app"
-	"gohello/duang"
+	"boom/app"
+	"boom/duang"
 	"net/http"
 	"time"
 )

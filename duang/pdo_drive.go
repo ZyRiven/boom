@@ -9,7 +9,7 @@
 package duang
 
 import (
-	"gohello/config"
+	"boom/config"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"log"
